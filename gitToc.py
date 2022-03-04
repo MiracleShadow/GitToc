@@ -39,25 +39,22 @@ def detectHeadLines(f):
                 suojin[c_status]=0
             elif c_status>last_status:
                 suojin[c_status]=suojin[last_status]+1
-            
+
             # update headline text
             headtext=' '.join(ls[1:-1])
-            if ls[-1][-1]=='\n':
-                headtext+=(' '+ls[-1][:-1])
-            else:
-                headtext+=(' '+ls[-1])
+            headtext += f' {ls[-1][:-1]}' if ls[-1][-1]=='\n' else f' {ls[-1]}'
             headid = '{}{}'.format('head',headline_counter)
             headline=ls[0]+' <span id=\"{}\"'.format(headid)+'>'+ headtext+'</span>'+'\n'
             org_str+=headline
 
             jump_str='- [{}](#{}{})'.format(headtext,'head',headline_counter)
             insert_str+=('\t'*suojin[c_status]+jump_str+'\n')
-                    
+
             last_status=c_status
         else:
             org_str+=line
-            
-            
+
+
     return insert_str+org_str
 
     
@@ -65,9 +62,7 @@ def detectHeadLines(f):
 if __name__=='__main__':
 
     filename = sys.argv[1]
-    #print(filename)
-    f = open(filename,'r',encoding='utf-8')
-    insert_str=detectHeadLines(f)
-    f.close()
+    with open(filename,'r',encoding='utf-8') as f:
+        insert_str=detectHeadLines(f)
     with open('{}_with_toc.md'.format(filename[:filename.find('.')]),'w',encoding='utf-8') as f:
         f.write(insert_str)
